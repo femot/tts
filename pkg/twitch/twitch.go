@@ -42,16 +42,11 @@ func (b *baruuk) parseMessage(msg t.PrivateMessage) {
 	switch command {
 	case "tts":
 		if len(split) > 1 {
-			b.tts(strings.Join(split[1:], " "))
+			b.player.QueueTTS(strings.Join(split[1:], " "))
 		}
+	case "skiptts":
+		b.player.Skip()
 	default:
 		log.Printf("unkown command: %s", command)
-
-	}
-}
-
-func (b *baruuk) tts(text string) {
-	if err := b.player.QueueTTS(text); err != nil {
-		log.Println(err)
 	}
 }
