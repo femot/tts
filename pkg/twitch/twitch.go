@@ -45,7 +45,9 @@ func (b *baruuk) parseMessage(msg t.PrivateMessage) {
 			b.player.QueueTTS(strings.Join(split[1:], " "))
 		}
 	case "skiptts":
-		b.player.Skip()
+		if msg.User.Badges["moderater"] == 1 || msg.User.Badges["broadcaster"] == 1 {
+			b.player.Skip()
+		}
 	default:
 		log.Printf("unkown command: %s", command)
 	}
