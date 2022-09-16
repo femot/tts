@@ -11,10 +11,15 @@ import (
 	"github.com/femot/tts/pkg/tts"
 )
 
+type AudioPlayer interface {
+	Stop() error
+	Done() <-chan struct{}
+}
+
 type Playlist struct {
 	queue   chan string
 	mu      sync.Mutex
-	current *audioplayer.AudioPlayer
+	current AudioPlayer
 	stop    bool
 }
 
@@ -37,7 +42,7 @@ func (p *Playlist) run() {
 				continue
 			}
 
-			f, err := os.CreateTemp("", "speak-*.ogg")
+			f, err := os.CreateTemp("", "speak-*.mp3")
 			if err != nil {
 				log.Printf("failed to create temp file: %s", err)
 				continue
@@ -51,7 +56,7 @@ func (p *Playlist) run() {
 			}
 			f.Close()
 
-			player, err := audioplayer.StartPlayer(f.Name())
+			player, err := audioplayer.StartPlayer2(f.Name())
 			if err != nil {
 				log.Printf("failed to start audio player: %s", err)
 				continue
