@@ -39,5 +39,5 @@ func SpeakFile(s string) ([]byte, error) {
 	}
 
 	b, err := io.ReadAll(resp.Body)
-	return b, nil
+	return b, err
 }
