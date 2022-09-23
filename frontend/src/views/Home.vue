@@ -1,12 +1,14 @@
 <template>
   <div class="home">
-    <Card title="Hi">
+    <Card title="Connect your channel">
       <div class="padding-md">
-        <form class="channel" @submit.prevent="submit">
-          <Field v-model="channel" label="Channel name" ></Field>
+        <form class="channel mb-lg" @submit.prevent="submit">
+          <Field v-model="channel" label="Channel name"></Field>
 
           <Action>Connect</Action>
         </form>
+        
+        <p class="help text-grey-50">By clicking connect you agree that you voluntarily subject yourself to mental torture via any TTS spam. The creators of this tool do not take any responsibilty for potential emotional damage caused.</p>
       </div>
     </Card>
   </div>
@@ -17,8 +19,6 @@
 import Card from '@/components/Card.vue'
 import Field from '@/components/Field.vue'
 import Action from '@/components/Action.vue'
-import twitch from '@/scripts/twitch'
-import tts from '@/scripts/tts'
 
 export default {
   name: 'Home',
@@ -32,28 +32,13 @@ export default {
       channel: ''
     }
   },
-  mounted () {
-    twitch.init()
-
-    twitch.onMessage((_, context, message) => {
-      console.log(context, message)
-
-      const isTts = /^!tts .+/.test(message)
-      const isSkipTts = /^!skiptts$/.test(message)
-      const canSkipTts = Object.keys(context.badges).some(key => ['broadcaster', 'moderator'].includes(key))
-
-      if (isTts) {
-        return tts.say(message.replace('!tts ', ''));
-      }
-
-      if (isSkipTts && canSkipTts) {
-        return tts.skip();
-      }
-    })
-  },
   methods: {
     submit () {
-      console.log('aa')
+      if (!this.channel) {
+        return
+      }
+
+      this.$router.push(`/${this.channel}`)
     }
   }
 }
@@ -72,5 +57,9 @@ export default {
   display: flex
   justify-content: space-between
   align-items: center
+
+.help
+  font-size: $text-xs
+  text-align: justify
 </style>
   

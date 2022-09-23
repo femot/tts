@@ -1,12 +1,20 @@
 <template>
-  <div class="home">
-    <Card title="Hi">
+  <div class="tts">
+    <Card :title="`Connected to ${$route.params.channel}`">
       <div class="padding-md">
-        <form class="channel" @submit.prevent="submit">
-          <Field v-model="channel" label="Channel name" ></Field>
+        <Action v-if="!active" @click="active = true">Activate</Action>
 
-          <Action>Connect</Action>
-        </form>
+        <p v-else-if="!queue || queue.length === 0" class="text-grey-30">The TTS queue is currently empty, awaiting requests</p>
+
+        <div v-else>
+          Requested messages
+
+          <ul class="list">
+            <li v-for="(message, key) of queue.reverse()" :key="key">
+              {{ message }}
+            </li>
+          </ul>
+        </div>
       </div>
     </Card>
   </div>
@@ -15,46 +23,42 @@
 
 <script>
 import Card from '@/components/Card.vue'
-import Field from '@/components/Field.vue'
 import Action from '@/components/Action.vue'
 import twitch from '@/scripts/twitch'
 import tts from '@/scripts/tts'
 
 export default {
-  name: 'Home',
+  name: 'Tts',
   components: {
     Card,
-    Field,
     Action,
   },
   data () {
     return {
-      channel: ''
+      active: false,
+      queue: [],
     }
   },
   mounted () {
-    twitch.init()
+    twitch.init(this.$route.params.channel)
 
     twitch.onMessage((_, context, message) => {
-      console.log(context, message)
-
       const isTts = /^!tts .+/.test(message)
       const isSkipTts = /^!skiptts$/.test(message)
       const canSkipTts = Object.keys(context.badges).some(key => ['broadcaster', 'moderator'].includes(key))
 
       if (isTts) {
-        return tts.say(message.replace('!tts ', ''));
+        const text= message.replace('!tts ', '')
+
+        this.queue.push(text)
+
+        return tts.say(text);
       }
 
       if (isSkipTts && canSkipTts) {
         return tts.skip();
       }
     })
-  },
-  methods: {
-    submit () {
-      console.log('aa')
-    }
   }
 }
 </script>
@@ -62,15 +66,13 @@ export default {
 <style lang="sass" scoped>
 @import @/assets/sass/base
 
-.home
+.tts
   height: 100vh
   display: flex
   align-items: center
   justify-content: center
 
-.channel
-  display: flex
-  justify-content: space-between
-  align-items: center
+.list
+  margin-top: 16px
 </style>
   

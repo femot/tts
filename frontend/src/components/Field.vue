@@ -3,10 +3,8 @@
     <span v-if="label" class="label">{{ label }}</span>
 
     <input
-      :value="value"
-      @input="$emit('input', $event.target.value)"
-      @focus="$emit('focus')"
-      @blur="$emit('blur')"
+      :value="modelValue"
+      @input="$emit('update:modelValue', $event.target.value)"
       maxlength="100"
       :placeholder="placeholder"
     />
@@ -15,11 +13,12 @@
 
 <script>
 export default {
-  name: 'Card',
+  name: 'Field',
+  emits: ['update:modelValue'],
   props: {
     label: String,
     placeholder: String,
-    value: String
+    modelValue: String
   }
 }
 </script>

@@ -31,6 +31,8 @@ export default {
   .card-body
     background: $secondary-shade-50
     flex: 1
+    max-height: 500px
+    overflow: auto
 
   .card-header
     border-top: none

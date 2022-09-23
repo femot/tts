@@ -2,9 +2,9 @@ import tmi from "tmi.js";
 
 export default {
 	client: null,
-	init() {
+	init(channel) {
 		const client = new tmi.Client({
-			channels: ["kitsuxiu"],
+			channels: [channel],
 		});
 
 		client.connect();

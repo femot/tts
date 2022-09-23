@@ -2,6 +2,7 @@ import axios from "axios"
 export default {
 	audio: null,
 	q: [],
+	playing: false,
 
 	async say(message) {
 		console.log("tts: " + message)
@@ -9,7 +10,7 @@ export default {
 		this.q.push(message)
 		console.log("added TTS to q. current queue length: " + this.q.length)
 
-		if ((this.audio && this.audio.ended) || !this.audio) {
+		if (!this.playing) {
 			this.play()
 		}
 	},
@@ -21,6 +22,8 @@ export default {
 			return
 		}
 
+		this.playing = true
+
 		const message = this.q.shift()
 		const resp = await axios.post(apiURL, {
 			"voice": "Brian",
@@ -28,8 +31,15 @@ export default {
 		})
 
 		this.audio = new Audio(resp.data.speak_url)
-		this.audio.onended = this.play.bind(this)
 		this.audio.play()
+			.catch(() => {
+				console.log("click activate first")
+				this.audio = null
+			})
+			.then(() => {
+				this.playing = false
+				this.play()
+			})
 	},
 	skip() {
 		if (this.audio) {
