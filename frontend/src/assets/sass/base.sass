@@ -1,0 +1,87 @@
+
+@import url(https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap)
+@import url(https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400&display=swap)
+
+@import variables
+
+html
+  min-height: 100%
+  overflow-y: scroll
+
+body
+  margin: 0
+  padding: 0
+  font-family: $font-family
+  font-size: $text-sm
+  background: $secondary-shade-70
+  color: $grey-10
+  height: 100%
+
+@media screen and (max-width: $tablet)
+  body
+    background: $secondary-shade-70
+
+*, *:before, *:after
+  box-sizing: border-box
+
+div, p, span, td
+  &.mb-xxl
+    margin-bottom: $xxl
+  &.mb-xl
+    margin-bottom: $xl
+  &.mb-lg
+    margin-bottom: $lg
+  &.mb-md
+    margin-bottom: $md
+  &.mb-sm
+    margin-bottom: $sm
+  &.mb-xs
+    margin-bottom: $xs
+  &.mb-xxs
+    margin-bottom: $xxs
+
+  &.mr-xxl
+    margin-right: $xxl
+  &.mr-xl
+    margin-right: $xl
+  &.mr-lg
+    margin-right: $lg
+  &.mr-md
+    margin-right: $md
+  &.mr-sm
+    margin-right: $sm
+  &.mr-xs
+    margin-right: $xs
+  &.mr-xxs
+    margin-right: $xxs
+
+  &.padding-xxl
+    padding: $xxl
+  &.padding-xl
+    padding: $xl
+  &.padding-lg
+    padding: $lg
+  &.padding-md
+    padding: $md
+  &.padding-sm
+    padding: $sm
+  &.padding-xs
+    padding: $xs
+  &.padding-xxs
+    padding: $xxs
+
+  &.text-grey-30
+    color: $grey-30
+  &.text-grey-50
+    color: $grey-50
+  &.text-primary
+    color: $primary
+  &.text-secondary
+    color: $secondary
+  &.text-secondary-tint-20
+    color: $secondary-tint-20
+  &.text-tertiary
+    color: $tertiary
+
+  &.text-right
+    text-align: right
