@@ -20,7 +20,7 @@ func Connect(channel string, debug bool) {
 
 	client.OnPrivateMessage(func(msg t.PrivateMessage) {
 		if debug {
-			log.Println(msg.User.Name+":", msg.Message)
+			log.Printf("New message: %+v", msg)
 		}
 		b.parseMessage(msg)
 	})
