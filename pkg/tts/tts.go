@@ -1,7 +1,6 @@
 package tts
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,7 +9,7 @@ import (
 
 var (
 	voice  = "Brian"
-	apiURL = "https://streamlabs.com/polly/speak"
+	apiURL = "https://api.streamelements.com/kappa/v2/speech"
 )
 
 type speakResponse struct {
@@ -19,29 +18,15 @@ type speakResponse struct {
 }
 
 func SpeakFile(s string) ([]byte, error) {
-	resp, err := http.PostForm(apiURL, url.Values{
-		"voice": {voice},
-		"text":  {s},
-	})
+	resp, err := http.Get(fmt.Sprintf("%s?voice=%s&text=%s", apiURL, voice, url.QueryEscape(s)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("unexpected HTTP response: %d", resp.StatusCode)
 	}
 
-	var sr speakResponse
-	err = json.NewDecoder(resp.Body).Decode(&sr)
-	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve speak file: %w", err)
-	}
-
-	resp, err = http.Get(sr.SpeakURL)
-	if err != nil {
-		return nil, err
-	}
-
-	b, err := io.ReadAll(resp.Body)
-	return b, err
+	return io.ReadAll(resp.Body)
 }
