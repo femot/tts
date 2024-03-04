@@ -8,28 +8,30 @@ import (
 	t "github.com/gempir/go-twitch-irc/v3"
 )
 
-type baruuk struct {
+type messageHandler struct {
 	client *t.Client
 	player *playlist.Playlist
 }
 
-func Connect() {
+func Connect(channel string, debug bool) {
 	client := t.NewAnonymousClient()
 
-	b := baruuk{client: client, player: playlist.NewPlaylist(5)}
+	b := messageHandler{client: client, player: playlist.NewPlaylist(5)}
 
 	client.OnPrivateMessage(func(msg t.PrivateMessage) {
-		log.Println(msg.User.Name+":", msg.Message)
+		if debug {
+			log.Println(msg.User.Name+":", msg.Message)
+		}
 		b.parseMessage(msg)
 	})
-	client.Join("kitsuxiu")
+	client.Join(channel)
 	err := client.Connect()
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (b *baruuk) parseMessage(msg t.PrivateMessage) {
+func (b *messageHandler) parseMessage(msg t.PrivateMessage) {
 	// Message too short or not a command
 	if len(msg.Message) < 2 || msg.Message[0] != '!' {
 		return
