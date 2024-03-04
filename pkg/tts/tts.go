@@ -27,6 +27,10 @@ func SpeakFile(s string) ([]byte, error) {
 		return nil, fmt.Errorf("failed to make request: %w", err)
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected HTTP response: %d", resp.StatusCode)
+	}
+
 	var sr speakResponse
 	err = json.NewDecoder(resp.Body).Decode(&sr)
 	if err != nil {
