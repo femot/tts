@@ -32,11 +32,9 @@ func Connect(channel string, opts Options) {
 	twitch.PubSub()
 	client := t.NewAnonymousClient()
 	mh := &messageHandler{client: client, player: playlist.NewPlaylist(5)}
-	if !opts.RedeemEnable {
-		client.OnPrivateMessage(func(msg t.PrivateMessage) {
-			mh.parseMessage(msg)
-		})
-	}
+	client.OnPrivateMessage(func(msg t.PrivateMessage) {
+		mh.parseMessage(msg, opts.RedeemEnable)
+	})
 	client.OnRoomStateMessage(func(msg t.RoomStateMessage) {
 		mh.mu.Lock()
 		defer mh.mu.Unlock()
@@ -92,7 +90,7 @@ func debugCallbacks(client *t.Client) {
 	client.OnUserStateMessage(func(msg t.UserStateMessage) { log.Printf("OnUserStateMessage: %+v", msg) })
 }
 
-func (b *messageHandler) parseMessage(msg t.PrivateMessage) {
+func (b *messageHandler) parseMessage(msg t.PrivateMessage, redeemEnable bool) {
 	// Message too short or not a command
 	if len(msg.Message) < 2 || msg.Message[0] != '!' {
 		return
@@ -104,7 +102,7 @@ func (b *messageHandler) parseMessage(msg t.PrivateMessage) {
 
 	switch command {
 	case "tts":
-		if len(split) > 1 {
+		if len(split) > 1 && !redeemEnable {
 			b.player.QueueTTS(strings.Join(split[1:], " "))
 		}
 	case "skiptts":
